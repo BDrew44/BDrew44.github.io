@@ -21,15 +21,19 @@ var init = function (window) {
 
     // TODO 2 : Create a function that draws a circle
     function drawCircle() {
-      physikz.addRandomVelocity(4);
+      physikz.addRandomVelocity(2.5);
       circle = draw.randomCircleInArea(canvas, true, true, "#999", 2);
-      physikz.addRandomVelocity(circle, canvas, 2.5, 2.5);
+      physikz.addRandomVelocity(circle, canvas, 4, 4);
       view.addChild(circle);
       circles.push(circle);
     }
 
     // TODO 3 / 7 : Call the drawCircle() function
-    drawCircle(5);
+    drawCircle([0]);
+    drawCircle([1]);
+    drawCircle([2]);
+    drawCircle([3]);
+    drawCircle([4]);
     ////////////////////////////////////////////////////////////
     ///////////////// PROGRAM LOGIC ////////////////////////////
     ////////////////////////////////////////////////////////////
