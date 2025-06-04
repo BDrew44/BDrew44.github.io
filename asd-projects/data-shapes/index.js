@@ -44,12 +44,12 @@ $(document).ready(function () {
   dataShapes.push(shape);
   // TODO 2: add a new property to all data shapes
   for (i = 0; i <= dataShapes.length - 1; i++) {
-    if (currentshape.color === "blue") {
-      goodBehaviour === "blink";
-    } else if (currentshape.color === "red") {
-      goodBehaviour === "bounce";
+    if ((currentShape.color === "blue")) {
+      currentShape.goodBehaviour = "blink";
+    } else if (currentShape.color === "red") {
+      currentShape.goodBehaviour = "bounce";
     } else {
-      goodBehaviour === "spin";
+      currentShape.goodBehaviour = "spin";
     }
   }
   dataShapes.push(currentShape);
@@ -68,11 +68,11 @@ $(document).ready(function () {
 
   // TODO 5-a: add a function that handles the bad display type
 
-function handleBad(data, repeat) {
-  repeat +++ 1
-  setBackgroundWithMixed(data, repeat)
-  animationDetails.displayType = 3
-}
+  function handleBad(data, repeat) {
+    repeat++;
+    setBackgroundWithMixed(data, repeat);
+    animationDetails.displayType = 3;
+  }
 
   /////////////////////////////////////////////////
   // BUTTON HANDLERS BELOW HERE (3-b, 4-b, 5-b) ///
@@ -92,8 +92,7 @@ function handleBad(data, repeat) {
   function badDisplay() {
     // TODO 5-b: call your handleBad function
   }
-  var currentShape = dataShapes[currentIndex]
-
+  var currentShape = dataShapes[currentIndex];
 
   /////////////////////////////////////////////////
   // ALL OF YOUR CODE SHOULD GO ABOVE HERE ////////
