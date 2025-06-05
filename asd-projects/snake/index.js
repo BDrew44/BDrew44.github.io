@@ -137,27 +137,33 @@ function moveSnake() {
 }
 
 function hasHitWall() {
-  /*TODO 8: Should return true if the snake's head has collided with the four walls of the
-  board, false otherwise. */
-  ROWS; // the total number of ROWS in the board
-  COLUMNS; // the total number of COLUMNS in the board
-  snake.head.row; // the current row of snake.head
-  snake.head.column; // the current column of snake.head
-
-  // HINT: What will the row and column of the snake's head be if this were the case?
-
-  return false;
+  // Return true if the snake's head is outside the board boundaries
+  if (snake.head.row < 0) {
+    return true;
+  } else if (snake.head.row > ROWS) {
+    return true;
+  } else if (snake.head.column < 0) {
+    return true;
+  } else if (snake.head.column > COLUMNS) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function hasCollidedWithApple() {
   /* 
-  TODO 9: Should return true if the snake's head has collided with the apple, 
+  Should return true if the snake's head has collided with the apple, 
   false otherwise
-  
-  HINT: Both the apple and the snake's head are aware of their own row and column
   */
-
-  return false;
+  if (
+    snake.head.row === apple.row &&
+    snake.head.column === apple.column
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function handleAppleCollision() {
