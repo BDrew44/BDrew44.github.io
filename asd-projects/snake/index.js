@@ -318,7 +318,24 @@ function handleKeyDown(event) {
 }
 
 /* Given a gameSquare (which may be a snakeSquare or the apple), position
- *var spaceIsAvailable;
+ * the gameSquare on the screen.
+ */
+function repositionSquare(square) {
+  var squareElement = square.element;
+  var row = square.row;
+  var column = square.column;
+
+  var buffer = 20;
+
+  // position the square on the screen according to the row and column
+  squareElement.css("left", column * SQUARE_SIZE + buffer);
+  squareElement.css("top", row * SQUARE_SIZE + buffer);
+}
+
+/* Returns a (row,column) Object that is not occupied by another game component
+ */
+function getRandomAvailablePosition() {
+  var spaceIsAvailable;
   var randomPosition = {};
 
   /* Generate random positions until one is found that doesn't overlap with the snake */
@@ -327,19 +344,18 @@ function handleKeyDown(event) {
     randomPosition.row = Math.floor(Math.random() * ROWS);
     spaceIsAvailable = true;
 
-    // Check if the random position overlaps with any part of the snake's body
-    for (var i = 0; i < snake.body.length; i++) {
-      var square = snake.body[i];
-      if (square.row === randomPosition.row && square.column === randomPosition.column) {
-        spaceIsAvailable = false;
-      }
-    
-  
     /*
     TODO 13: After generating the random position determine if that position is
     not occupied by a snakeSquare in the snake's body. If it is then set 
     spaceIsAvailable to false so that a new position is generated.
     */
+   // Check if the random position overlaps with any part of the snake's body
+    for (var i = 0; i < snake.body.length; i++) {
+      var square = snake.body[i];
+      if (square.row === randomPosition.row && square.column === randomPosition.column) {
+        spaceIsAvailable = false;
+      }
+    }
   }
 
   return randomPosition;
