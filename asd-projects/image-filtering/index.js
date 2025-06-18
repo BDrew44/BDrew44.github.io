@@ -20,7 +20,7 @@ function resetAndRender() {
 // all of your apply functions
 function applyAndRender() {
   // Multiple TODOs: Call your apply function(s) here
-applyFilter(reddify);
+  applyFilter(reddify);
   applyFilter(decreaseBlue);
   applyFilter(increaseGreenByBlue);
   // do not change the below line of code
@@ -85,6 +85,5 @@ function applyFilterNoBackground(filterFunction) {
     }
   }
 }
-
 
 // CHALLENGE code goes below here

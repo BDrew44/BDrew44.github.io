@@ -116,7 +116,7 @@ function moveSnake() {
   column/row properties. 
   */
 
-for (var i = snake.body.length - 1; i > 0; i--) {
+  for (var i = snake.body.length - 1; i > 0; i--) {
     var snakeSquare = snake.body[i];
     var nextSnakeSquare = snake.body[i - 1];
     var nextRow = nextSnakeSquare.row;
@@ -127,8 +127,7 @@ for (var i = snake.body.length - 1; i > 0; i--) {
     snakeSquare.row = nextRow;
     snakeSquare.column = nextColumn;
     repositionSquare(snakeSquare);
-}
-
+  }
 
   //Before moving the head, check for a new direction from the keyboard input
   checkForNewDirection();
@@ -169,10 +168,7 @@ function hasCollidedWithApple() {
   Should return true if the snake's head has collided with the apple, 
   false otherwise
   */
-  if (
-    snake.head.row === apple.row &&
-    snake.head.column === apple.column
-  ) {
+  if (snake.head.row === apple.row && snake.head.column === apple.column) {
     return true;
   } else {
     return false;
@@ -218,13 +214,12 @@ function hasCollidedWithSnake() {
   head and each part of the snake's body also knows its own row and column.
   
   */
-for (var i = 1; i < snake.body.length; i++) {
+  for (var i = 1; i < snake.body.length; i++) {
     var square = snake.body[i];
     if (snake.head.row === square.row && snake.head.column === square.column) {
       return true;
     }
   }
-
 
   return false;
 }
@@ -349,10 +344,13 @@ function getRandomAvailablePosition() {
     not occupied by a snakeSquare in the snake's body. If it is then set 
     spaceIsAvailable to false so that a new position is generated.
     */
-   // Check if the random position overlaps with any part of the snake's body
+    // Check if the random position overlaps with any part of the snake's body
     for (var i = 0; i < snake.body.length; i++) {
       var square = snake.body[i];
-      if (square.row === randomPosition.row && square.column === randomPosition.column) {
+      if (
+        square.row === randomPosition.row &&
+        square.column === randomPosition.column
+      ) {
         spaceIsAvailable = false;
       }
     }
