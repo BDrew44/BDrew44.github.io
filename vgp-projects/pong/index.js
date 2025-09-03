@@ -28,7 +28,7 @@
   // Variable declarations for the paddles and the ball which are drawn using createJS (see bower_components/opspark-draw/draw.js)
   const paddlePlayer = createPaddle();
   const paddleCPU = createPaddle({
-    x: canvas.width - 20,
+    x: canvas.width - 30,
     y: canvas.height - 100,
   });
   const ball = draw.circle(20, "#CCC");
@@ -89,20 +89,44 @@
 
     // AI movement: CPU follows ball //
     if ((paddleCPU.y + midCPU) < (ball.y - 14)) {
-      paddleCPU.y += paddleCPU.yVelocity;
+      paddleCPU.y += paddleCPU.yVelocity; 
     } else if ((paddleCPU.y + midCPU) > (ball.y + 14)) {
       paddleCPU.y -= paddleCPU.yVelocity;
     }
+    // if the hard coded value of 14 is lowered, the AI will be more accurate
+    // if the hard coded value of 14 is increased, the AI will be less accurate
 
     // TODO 1: bounce the ball off the top
-
+if (ball.x <= 0 - 10) {
+  ball.xVelocity = -ball.xVelocity;
+  createjs.Sound.play("wall");
+} else if (ball.y >= canvas.height + 10) {
+  ball.xVelocity = -ball.xVelocity;
+  createjs.Sound.play("wall");
+}
 
     // TODO 2: bounce the ball off the bottom
-
+if (ball.y <= 0 + 10) {
+  ball.yVelocity = -ball.yVelocity;
+  createjs.Sound.play("wall");
+} else if (ball.y >= canvas.height - 10) {
+  ball.yVelocity = -ball.yVelocity;
+  createjs.Sound.play("wall");
+}
 
     // TODO 3: bounce the ball off each of the paddles
-
-
+ if (ball.x <= widthPlayer + 10 && ball.y >= paddlePlayer.y && ball.y <= paddlePlayer.y + heightPlayer) {
+  ball.xVelocity = -ball.xVelocity;
+  createjs.Sound.play("hit");
+} else if (ball.x >= canvas.width - widthCPU - 10 && ball.y >= paddleCPU.y && ball.y <= paddleCPU.y + heightCPU) {
+  ball.xVelocity = -ball.xVelocity;
+  createjs.Sound.play("hit");
+}
+// reset the ball if it goes past the left or right side of the screen //
+if (ball.x <= 0 - 10 || ball.x >= canvas.width + 10) {
+  ball.x = canvas.width / 2;
+  ball.y = canvas.height / 2;
+}
   }
 
   // helper function that wraps the draw.rect function for easy paddle making
