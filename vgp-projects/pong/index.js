@@ -25,13 +25,24 @@
     .addTickHandlers(update) // establish the update function as the callback for every timer tick
     .activateTick();
 
-  // Variable declarations for the paddles and the ball which are drawn using createJS (see bower_components/opspark-draw/draw.js)
+  // Variable declarations for the paddles, ball, and score display
   const paddlePlayer = createPaddle();
   const paddleCPU = createPaddle({
     x: canvas.width - 30,
     y: canvas.height - 100,
   });
   const ball = draw.circle(20, "#CCC");
+  let playerScore = 0;
+  let cpuScore = 0;
+  const txtScore = draw.textfield(
+  `Player: ${playerScore}  AI: ${cpuScore}`,
+    "bold 24px Arial",
+    "#000000ff",
+    "center",
+    "top",
+    canvas.width / 2,
+    30
+  );
 
   // set initial properties for the paddles
   paddlePlayer.yVelocity = 0;
@@ -43,8 +54,8 @@
   ball.xVelocity = 5;
   ball.yVelocity = 5;
 
-  // add the paddles and the ball to the view
-  stage.addChild(paddlePlayer, paddleCPU, ball);
+  // add the paddles, ball, and score to the view
+  stage.addChild(paddlePlayer, paddleCPU, ball, txtScore);
 
   document.addEventListener("keyup", onKeyUp);
   document.addEventListener("keydown", onKeyDown);
@@ -88,45 +99,54 @@
     }
 
     // AI movement: CPU follows ball //
-    if ((paddleCPU.y + midCPU) < (ball.y - 14)) {
-      paddleCPU.y += paddleCPU.yVelocity; 
-    } else if ((paddleCPU.y + midCPU) > (ball.y + 14)) {
+    if (paddleCPU.y + midCPU < ball.y - 14) {
+      paddleCPU.y += paddleCPU.yVelocity;
+    } else if (paddleCPU.y + midCPU > ball.y + 14) {
       paddleCPU.y -= paddleCPU.yVelocity;
     }
     // if the hard coded value of 14 is lowered, the AI will be more accurate
     // if the hard coded value of 14 is increased, the AI will be less accurate
 
-    // TODO 1: bounce the ball off the top
-if (ball.x <= 0 - 10) {
-  ball.xVelocity = -ball.xVelocity;
-  createjs.Sound.play("wall");
-} else if (ball.y >= canvas.height + 10) {
-  ball.xVelocity = -ball.xVelocity;
-  createjs.Sound.play("wall");
-}
+    // Bounce the ball off the top and bottom walls only
+    if (ball.y <= 0 + 10) {
+      ball.yVelocity = -ball.yVelocity;
+      createjs.Sound.play("wall");
+    } else if (ball.y >= canvas.height - 10) {
+      ball.yVelocity = -ball.yVelocity;
+      createjs.Sound.play("wall");
+    }
 
-    // TODO 2: bounce the ball off the bottom
-if (ball.y <= 0 + 10) {
-  ball.yVelocity = -ball.yVelocity;
-  createjs.Sound.play("wall");
-} else if (ball.y >= canvas.height - 10) {
-  ball.yVelocity = -ball.yVelocity;
-  createjs.Sound.play("wall");
-}
+    // Bounce the ball off each of the paddles
+    if (
+      ball.x <= widthPlayer + 10 &&
+      ball.y >= paddlePlayer.y &&
+      ball.y <= paddlePlayer.y + heightPlayer
+    ) {
+      ball.xVelocity = -ball.xVelocity;
+      createjs.Sound.play("hit");
+    } else if (
+      ball.x >= canvas.width - widthCPU - 10 &&
+      ball.y >= paddleCPU.y &&
+      ball.y <= paddleCPU.y + heightCPU
+    ) {
+      ball.xVelocity = -ball.xVelocity;
+      createjs.Sound.play("hit");
+    }
 
-    // TODO 3: bounce the ball off each of the paddles
- if (ball.x <= widthPlayer + 10 && ball.y >= paddlePlayer.y && ball.y <= paddlePlayer.y + heightPlayer) {
-  ball.xVelocity = -ball.xVelocity;
-  createjs.Sound.play("hit");
-} else if (ball.x >= canvas.width - widthCPU - 10 && ball.y >= paddleCPU.y && ball.y <= paddleCPU.y + heightCPU) {
-  ball.xVelocity = -ball.xVelocity;
-  createjs.Sound.play("hit");
-}
-// reset the ball if it goes past the left or right side of the screen //
-if (ball.x <= 0 - 10 || ball.x >= canvas.width + 10) {
-  ball.x = canvas.width / 2;
-  ball.y = canvas.height / 2;
-}
+    // Score and reset the ball if it goes past the left or right side of the screen
+    if (ball.x <= 0 - 10) {
+  cpuScore++;
+  txtScore.text = `Player: ${playerScore}  AI: ${cpuScore}`;
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.xVelocity = Math.abs(ball.xVelocity); // always send ball to the right after reset
+    } else if (ball.x >= canvas.width + 10) {
+  playerScore++;
+  txtScore.text = `Player: ${playerScore}  AI: ${cpuScore}`;
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.xVelocity = -Math.abs(ball.xVelocity); // always send ball to the left after reset
+    }
   }
 
   // helper function that wraps the draw.rect function for easy paddle making
