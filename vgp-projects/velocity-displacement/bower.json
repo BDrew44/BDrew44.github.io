@@ -20,6 +20,7 @@
     "EaselJS": "^1.0.2",
     "opspark-draw": "^1.0.0",
     "racket": "^1.0.2",
-    "V6": "^0.0.2"
+    "V6": "^0.0.2",
+    "code-paradise": "https://github.com/BDrew44/code-paradise"
   }
 }

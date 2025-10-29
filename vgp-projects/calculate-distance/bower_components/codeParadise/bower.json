@@ -1,0 +1,17 @@
+{
+  "name": "codeParadise",
+  "main": "index.js",
+  "homepage": "https://github.com/BDrew44/code-paradise",
+  "description": "game library",
+  "keywords": [
+    "video-games"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

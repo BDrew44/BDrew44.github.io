@@ -18,6 +18,7 @@
   ],
   "dependencies": {
     "EaselJS": "^1.0.2",
-    "V6": "^0.0.2"
+    "V6": "^0.0.2",
+    "codeParadise": "https://github.com/BDrew44/code-paradise.git#^0.1.0"
   }
 }
