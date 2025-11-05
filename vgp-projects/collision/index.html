@@ -1,24 +1,96 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html>
-
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
 
     <title>Operation Spark || Collision</title>
-    <link rel="shortcut icon" href="img/favicon.ico">
-    <meta name="description" content="Operation Spark | Collision">
-    <meta name="author" content="operationspark.org">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/favicon.ico" />
+    <meta name="description" content="Operation Spark | Collision" />
+    <meta name="author" content="operationspark.org" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet" />
 
-    <script src="bower_components/lodash/dist/lodash.min.js"></script>
-    <script src="bower_components/EaselJS/lib/easeljs.min.js"></script>
-    <script src="bower_components/V6/index.js"></script>
-    <script src="bower_components/opspark-draw/draw.js"></script>
-    <script src="bower_components/racket/racket.js"></script>
-    <script src="bower_components/messenjah/index.js"></script>
+    <!-- Lightweight runtime error overlay: displays uncaught errors and rejections on the page -->
+    <script>
+      (function () {
+        function createOverlay() {
+          var o = document.createElement("div");
+          o.id = "error-overlay";
+          Object.assign(o.style, {
+            position: "fixed",
+            left: "0",
+            top: "0",
+            right: "0",
+            padding: "12px",
+            background: "rgba(180,30,30,0.95)",
+            color: "#fff",
+            fontFamily: "monospace",
+            fontSize: "13px",
+            zIndex: 2147483647,
+            whiteSpace: "pre-wrap",
+            maxHeight: "45vh",
+            overflow: "auto",
+          });
+          return o;
+        }
+
+        function showError(text) {
+          var o = document.getElementById("error-overlay");
+          if (!o) {
+            o = createOverlay();
+            if (document.body) document.body.appendChild(o);
+            else
+              document.addEventListener("DOMContentLoaded", function () {
+                document.body.appendChild(o);
+              });
+          }
+          o.textContent = text;
+        }
+
+        window.addEventListener(
+          "error",
+          function (ev) {
+            try {
+              var msg =
+                ev.message || (ev.error && ev.error.message) || String(ev);
+              var src = ev.filename || (ev.target && ev.target.src) || "";
+              var loc = ev.lineno ? ev.lineno + ":" + (ev.colno || 0) : "";
+              var stack =
+                ev.error && ev.error.stack ? "\n" + ev.error.stack : "";
+              showError(
+                "Error: " + msg + "\n" + src + (loc ? ":" + loc : "") + stack
+              );
+              console.error(ev.error || ev.message, ev);
+            } catch (e) {
+              console.error("error overlay failed", e);
+            }
+          },
+          true
+        );
+
+        window.addEventListener("unhandledrejection", function (ev) {
+          try {
+            var reason =
+              ev.reason &&
+              (ev.reason.stack || ev.reason.message || String(ev.reason));
+            showError("Unhandled Rejection: " + reason);
+            console.error("Unhandled Rejection", ev.reason);
+          } catch (e) {
+            console.error("error overlay failed", e);
+          }
+        });
+      })();
+    </script>
+
+    <!-- load shared vendor scripts from nearby project that contains bower_components -->
+    <script src="../velocity-displacement/bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="../velocity-displacement/bower_components/EaselJS/lib/easeljs.min.js"></script>
+    <script src="../velocity-displacement/bower_components/V6/index.js"></script>
+    <script src="../velocity-displacement/bower_components/opspark-draw/draw.js"></script>
+    <script src="../velocity-displacement/bower_components/racket/racket.js"></script>
+    <!-- messenjah is not present in this project; omitted to avoid 404s -->
 
     <script src="space.js"></script>
     <script src="assets.js"></script>
@@ -26,13 +98,12 @@
     <script src="view-manager.js"></script>
     <script src="orb-manager.js"></script>
     <script src="ship-manager.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div>
-        <canvas id="canvas" width="500" height="500"></canvas>
+      <canvas id="canvas" width="500" height="500"></canvas>
     </div>
     <script src="index.js"></script>
-</body>
-
+  </body>
 </html>

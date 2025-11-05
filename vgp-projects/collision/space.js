@@ -1,20 +1,19 @@
-(function(window, opspark, racket) {
+(function (window, opspark, racket) {
   /**
-   * Creates and returns the space module. Listens for SPAWN 
+   * Creates and returns the space module. Listens for SPAWN
    * events, adding any bodies in the event
    * @param {Object} messenger: The system wide event dispatcher.
    */
-  opspark.space = function(messenger) {
+  opspark.space = function (messenger) {
     // holds all bodies active in our space //
-    const 
-      dampeningForce = 0.08,
+    const dampeningForce = 0.08,
       active = [];
 
-    messenger.on('SPAWN', onSpawn);
+    messenger.on("SPAWN", onSpawn);
     function onSpawn(event) {
       add(...event.bodies);
     }
-    
+
     function add(...bodies) {
       active.push(...bodies);
       return this;
@@ -28,13 +27,13 @@
       add,
       remove,
       destroy() {
-        messenger.off('SPAWN', onSpawn);
+        messenger.off("SPAWN", onSpawn);
       },
       update(event) {
-        active.forEach(body => {
+        active.forEach((body) => {
           // ask the body to update its velocity //
           body.update(event);
-          
+
           // update the body's position based on its new velocity //
           racket.physikz.updatePosition(body);
         });
@@ -47,35 +46,44 @@
           // compare all other bodies to bodyA, excluding bodyA: note j > -1 //
           hit: for (let j = i - 1; j > -1; j--) {
             const bodyB = active[j];
-            
+
             // TODO 1: Calculate hit test components
-            
-            
-              
+            const distanceX = bodyA.x - bodyB.x;
+            const distanceY = bodyA.y - bodyB.y;
+            const distance = Math.sqrt(
+              distanceX * distanceX + distanceY * distanceY
+            );
+            const minimumDistance =
+              (bodyA.radius || (bodyA.width || 0) / 2) +
+              (bodyB.radius || (bodyB.width || 0) / 2);
+
             // TODO 2: Do collision check: how do we know if bodies are colliding?
-            if(/* replace with collision check */ false) {
+
+            if (distance < minimumDistance) {
               // console.log('hit!');
-              
-              // TODO 3: Calculate springToX and springToY 
-              
-              
-                
+
+              // TODO 3: Calculate springToX and springToY
+
+              const angle = Math.atan2(distanceY, distanceX);
+              const springToX = bodyA.x + Math.cos(angle) * minimumDistance;
+              const springToY = bodyA.y + Math.sin(angle) * minimumDistance;
+
               // TODO 4: Calculate acceleration to spring-to point, factor in dampeningForce
-              
-              
-              
+
+              const accelerationOnX = (bodyB.x - springToX) * dampeningForce;
+              const accelerationOnY = (bodyB.y - springToY) * dampeningForce;
+
               // TODO 5: Apply acceleration to bodyB
-              
-              
-              
+              bodyB.velocityX += accelerationOnX;
+              bodyB.velocityY += accelerationOnY;
+
               // TODO 6: Apply inverse acceleration to bodyA
-              
-              
-              
+              bodyA.velocityX -= accelerationOnX;
+              bodyA.velocityY -= accelerationOnY;
             }
           }
         }
-      }
+      },
     };
   };
-}(window, window.opspark, window.opspark.racket));
+})(window, window.opspark, window.opspark.racket);
