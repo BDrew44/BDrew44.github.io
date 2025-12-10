@@ -22,6 +22,17 @@
   const stage = engine.getStage();
 
   // TODO 4.5: import your getDistance function here
+  // prefer the library implementation but fall back to a local one
+  const getDistance =
+    (codeParadise &&
+      codeParadise.numz &&
+      codeParadise.numz.calculateDistance) ||
+    (codeParadise && codeParadise.calculateDistance) ||
+    function (a, b) {
+      const dx = (a.x || 0) - (b.x || 0);
+      const dy = (a.y || 0) - (b.y || 0);
+      return Math.sqrt(dx * dx + dy * dy);
+    };
 
   const radius = 25; // the radius of our two circles
   const shapeUp = new createjs.Shape(); // the up state: the mouse is NOT intersecting
@@ -56,17 +67,25 @@
      * TODO 5: use getDistance to calculate the distance between shapeUp and
      * the mouse. Store the result in a variable called distance:
      */
-
+    const distance = getDistance(shapeUp, { x: stage.mouseX, y: stage.mouseY });
     /*
      * TODO 6: Check if the mouse is within the area of shapeUp, and set the
      * alpha property of shapeUp accordingly:
      */
+    const distanceToEdge = Math.max(0, distance - radius);
+    if (distance <= radius) {
+      shapeUp.alpha = 0;
+      shapeOver.alpha = 1;
+    } else {
+      shapeUp.alpha = 1;
+      shapeOver.alpha = 0;
+    }
 
     /*
      * Update the textfield with the current distance between the mouse and
      *the edge of the shapeUp
      */
-    updateText(textfield, `Distance: ${Math.round(distance)}px`);
+    updateText(textfield, `Distance: ${Math.round(distanceToEdge)}px`);
   }
 
   // this method updates the text on a textfield, then re-centers the textfield //
