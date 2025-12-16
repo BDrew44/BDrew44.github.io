@@ -1,5 +1,5 @@
 // TODO 4: add a param for your game lib last //
-(function(window, opspark) {
+(function(window, createjs, opspark, codeParadise) {
   console.log('index.js initialized!');
 
   const
@@ -53,4 +53,4 @@
     .activateTick();
 
 // TODO 3: pass your game lib last with, window.my-game-lib //
-}(window, window.opspark));
+}(window, window.createjs, window.opspark, window.codeParadise));
