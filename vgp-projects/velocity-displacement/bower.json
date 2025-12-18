@@ -3,24 +3,17 @@
   "version": "0.0.1",
   "description": "Velocity & Displacement",
   "main": "index.html",
-  "authors": [
-    "jfraboni"
-  ],
+  "authors": ["jfraboni"],
   "license": "Copywrite Operation Spark",
-  "homepage": "",
+  "homepage": "https://github.com/BDrew44/BDrew44.github.io",
   "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
+  "ignore": ["**/.*", "node_modules", "bower_components", "test", "tests"],
   "dependencies": {
     "EaselJS": "^1.0.2",
     "opspark-draw": "^1.0.0",
     "racket": "^1.0.2",
     "V6": "^0.0.2",
-    "code-paradise": "https://github.com/BDrew44/code-paradise"
+    "code-paradise": "https://github.com/BDrew44/code-paradise",
+    "codeParadise": "https://github.com/BDrew44/code-paradise.git#^0.1.0"
   }
 }

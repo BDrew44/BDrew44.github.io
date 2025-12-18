@@ -1,5 +1,5 @@
 // TODO 4: Change *my-game-lib* to the name of your game lib
-(function (window, opspark, createJs) {
+(function (window, opspark, createJs, codeParadise) {
   const engine = opspark.V6().activateResize(),
     canvas = engine.getCanvas(),
     stage = engine.getStage(),
@@ -33,6 +33,29 @@
      * is available to you in this scope as, "this".
      * 2. What are the x and y forces acting on our ship?
      */
+
+    if (
+      codeParadise &&
+      codeParadise.phyz &&
+      typeof codeParadise.phyz.updateVelocity === "function"
+    ) {
+      codeParadise.phyz.updateVelocity(this, this.propulsion, this.propulsion);
+    } else {
+      // fallback: simple velocity update if updateVelocity isn't provided
+      this.velocityX = (this.velocityX || 0) + (this.propulsion || 0);
+      this.velocityY = (this.velocityY || 0) + (this.propulsion || 0);
+      // log once to help debugging if API mismatch
+      if (!this._loggedVelocityFallback) {
+        console.warn(
+          "phyz.updateVelocity not found, using fallback velocity update"
+        );
+        this._loggedVelocityFallback = true;
+      }
+    }
+
+    // light damping so the ship will slow when no propulsion applied
+    this.velocityX = (this.velocityX || 0) * 0.99;
+    this.velocityY = (this.velocityY || 0) * 0.99;
 
     // also check if the ship needs to rebound off a boundary //
     reboundCircularAssetInArea(this, canvas);
@@ -71,6 +94,13 @@
   // listen for user releasing keys //
   document.onkeyup = function (event) {
     // TODO 13: How do we stop the application of forces?
+    // stop propulsion and rotation when keys are released
+    if (event.key === "ArrowUp") {
+      ship.propulsion = 0;
+    }
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      ship.rotationalVelocity = 0;
+    }
   };
 
   function reboundCircularAssetInArea(body, area) {
@@ -85,9 +115,14 @@
       // we've struck the right side of the area //
       body.x = right - radius;
       body.velocityX *= -1;
-    } else if (/* TODO 9: Check if body's hit left side */ false) {
+    } else if (
+      /* TODO 9: Check if body's hit left side */ body.x - radius <
+      left
+    ) {
       // we've struck the left side of the area //
       // TODO 10: Code the reaction to hitting the left side
+      body.x = left + radius;
+      body.velocityX *= -1;
     }
 
     // check for hit on top or bottom //
@@ -95,11 +130,16 @@
       // we've struck the right side of the area //
       body.y = top + radius;
       body.velocityY *= -1;
-    } else if (/* TODO 11: Check if body's hit bottom */ false) {
+    } else if (
+      /* TODO 11: Check if body's hit bottom */ body.y + radius >
+      bottom
+    ) {
       // we've struck the bottom of the area //
       // TODO 12: Code the reaction to hitting the bottom
+      body.y = bottom - radius;
+      body.velocityY *= -1;
     }
   }
 
   // TODO 3: replace *my-game-lib* with the name of your game lib //
-})(window, window.opspark, window.createJs);
+})(window, window.opspark, window.createJs, window.codeParadise);
