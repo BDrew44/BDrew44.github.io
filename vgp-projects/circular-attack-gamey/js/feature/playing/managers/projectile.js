@@ -46,6 +46,7 @@
       }
 
       // return the projectile manager api //
+      // emitter = ship
       return {
         fire: function(emitter) {
           var projectile, degrees;

@@ -1,16 +1,17 @@
 (function (window, opspark, _) {
   const Proton = window.Proton;
 
-  // create a namespace for the orb manager //
+  // create a namespace for the powerup manager //
   _.set(
     opspark,
-    "playa.orb",
+    "playa.powerup",
     /**
-     * Creates and returns the orb manager.
+     * Creates and returns the powerup manager.
      */
     function (assets, fx, messenger) {
       const active = [],
         objects = [],
+        timeouts = [],
         pool = {
           active,
           objects,
@@ -26,7 +27,7 @@
             messenger.dispatch({
               type: "POOL",
               bodies: [object],
-              source: "orb",
+              source: "powerup",
             });
             // remove object from the active Array //
             const i = active.indexOf(object);
@@ -41,7 +42,7 @@
             objects.push(object);
           },
         },
-        orbManager = {
+        powerupManager = {
           getNumberActive() {
             return active.length;
           },
@@ -50,41 +51,63 @@
             for (let i = 0; i < number; i++) {
               spawned.push(pool.get());
             }
+            // randomize spawn positions (use window size as canvas proxy)
+            spawned.forEach((b) => {
+              b.x = Math.round(Math.random() * window.innerWidth);
+              b.y = Math.round(Math.random() * window.innerHeight);
+            });
             active.push(...spawned);
             messenger.dispatch({
               type: "SPAWN",
               bodies: spawned,
-              source: "orb",
+              source: "powerup",
             });
             return this;
+          },
+          destroy() {
+            // clear any pending respawn timers
+            while (timeouts.length) {
+              clearTimeout(timeouts.pop());
+            }
           },
         };
 
       function makeObject() {
-        const orb = assets.makeOrb();
-        // ensure orb has a numeric radius for collision detection
-        if (!orb || !isFinite(orb.radius) || orb.radius <= 0) {
-          try {
-            const b = orb.getBounds && orb.getBounds();
-            if (b && isFinite(b.width) && b.width > 0)
-              orb.radius = Math.max(b.width, b.height) / 2;
-            else orb.radius = 10;
-          } catch (e) {
-            orb.radius = 10;
-          }
-        }
-        // ensure integrity exists
-        if (!isFinite(orb.integrity)) orb.integrity = Math.ceil(orb.radius / 2);
-        orb.handleCollision = handleCollision;
-        return orb;
+        const powerup = assets.makePowerUp();
+        powerup.handleCollision = handleCollision;
+        return powerup;
       }
 
       function handleCollision(impact, body) {
-        // don't handle collisions between orbs //
+        // don't handle collisions between powerups //
         if (body.type === this.type) return;
-
+        // this = powerup
+        // body = obstacle or player
+        // if the player collected the powerup, recycle it immediately
+        if (body.type === "ship") {
+          fx.makeEmitter(2, 4, "rgba(255,255,255,0.3)", null, [
+            new Proton.RandomDrift(6, 0, 0.35),
+          ]).emit({ x: this.x, y: this.y }, 0.4);
+          pool.recycle(this);
+          messenger.dispatch({
+            type: "COLLECT",
+            source: "powerup",
+            target: this,
+            incoming: body,
+          });
+          // schedule respawn after 10 seconds
+          const id = setTimeout(() => {
+            try {
+              powerupManager.spawn(1);
+            } catch (e) {
+              /* ignore if manager gone */
+            }
+          }, 10000);
+          timeouts.push(id);
+          return;
+        }
         /*
-         * Because the explosion is async, the orb may exist
+         * Because the explosion is async, the powerup may exist
          * but have already exploded, so check first to see
          * if it has integrity before running check to exlode.
          */
@@ -98,7 +121,7 @@
             pool.recycle(this);
             messenger.dispatch({
               type: "EXPLOSION",
-              source: "orb",
+              source: "powerup",
               target: this,
               incoming: body,
             });
@@ -106,8 +129,8 @@
         }
       }
 
-      // return orb manager api //
-      return orbManager;
+      // return powerup manager api //
+      return powerupManager;
     }
   );
 })(window, window.opspark, window._);

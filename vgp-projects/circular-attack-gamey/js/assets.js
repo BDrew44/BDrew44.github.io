@@ -1,6 +1,5 @@
-(function(window, opspark, _) {
-  const
-    Proton = window.Proton,
+(function (window, opspark, _) {
+  const Proton = window.Proton,
     draw = opspark.draw,
     phyz = opspark.racket.physikz,
     numz = opspark.racket.num;
@@ -11,7 +10,7 @@
    * @param {Canvas} canvas: The HTML canvas element.
    */
   function centerOnStage(asset, canvas, level) {
-    if (asset.type === 'circular' || asset.radius) {
+    if (asset.type === "circular" || asset.radius) {
       asset.x = canvas.width / 2;
       asset.y = canvas.height / 2;
     } else {
@@ -30,125 +29,182 @@
   }
 
   /**
-   * Creates an API at opspark.assets to 
+   * Creates an API at opspark.assets to
    * build and work with visual assets.
-   * 
-   * @param {Object} canvas: The canvas on which the 
+   *
+   * @param {Object} canvas: The canvas on which the
    * game is drawn, used for incept positioning of assets.
    */
-  _.set(opspark, 'playa.assets',
-    function(canvas, fx, level) {
-      // ASSET BEHAVIORS //
-      function updateShip(event) {
-        phyz.updateVelocity(this, this.propulsion, this.propulsion);
-        phyz.reboundCircularAssetInArea(this, canvas);
-      }
+  _.set(opspark, "playa.assets", function (canvas, fx, level) {
+    // ASSET BEHAVIORS //
+    function updateShip(event) {
+      phyz.updateVelocity(this, this.propulsion, this.propulsion);
+      phyz.reboundCircularAssetInArea(this, canvas);
+    }
+    // creat a new update funnction for power ups
 
-      function updateOrb(event) {
-        phyz.updateVelocity(this, 0, 0);
-        phyz.reboundCircularAssetInArea(this, canvas);
-      }
+    function updateOrb(event) {
+      phyz.updateVelocity(this, 0, 0);
+      phyz.reboundCircularAssetInArea(this, canvas);
+    }
 
-      function updateProjectile(impact) {
-        phyz.reboundCircularAssetInArea(this, canvas);
-      }
+    function updateProjectile(impact) {
+      phyz.reboundCircularAssetInArea(this, canvas);
+    }
 
-      /**
-       * Each method draws and assembles the asset in a 
-       * default state, assigning its update method.
-       */
-      return {
-        makeProjectile() {
-          const projectile = _.extend(draw.circle(5, '#ff0000'), phyz.makeBody('projectile'));
+    /**
+     * Each method draws and assembles the asset in a
+     * default state, assigning its update method.
+     */
+    return {
+      makeProjectile() {
+        const projectile = _.extend(
+          draw.circle(5, "#ff0000"),
+          phyz.makeBody("projectile")
+        );
 
-          // TODO : get from settings JSON //
-          projectile.volatility = .125;
-          projectile.velocityMax = 10;
-          projectile.update = updateProjectile
-          
-          projectile.snapToPixel = true;
-          projectile.cache(-projectile.radius, -projectile.radius, projectile.radius * 2, projectile.radius * 2);
+        // TODO : get from settings JSON //
+        projectile.volatility = 0.125;
+        projectile.velocityMax = 10;
+        projectile.update = updateProjectile;
 
-          return projectile;
-        },
-        makeShip(color) {
-          const
-            radius = 25,
-            ship = draw.rect(radius, radius, color, null, null, -(radius + radius / 10), -(radius / 2));
+        projectile.snapToPixel = true;
+        projectile.cache(
+          -projectile.radius,
+          -projectile.radius,
+          projectile.radius * 2,
+          projectile.radius * 2
+        );
 
-          // continue to draw on the ship Shape to create our design //
-          draw.circle(radius + 3, color, null, null, null, null, ship);
-          draw.circle(radius, '#CCC', null, null, null, null, ship);
-          draw.polyStar(radius, 3, 0, 0, color, null, null, null, null, ship);
-          draw.circle(radius - 15, '#CCC', null, null, -5, null, ship);
+        return projectile;
+      },
+      makeShip(color) {
+        const radius = 25,
+          ship = draw.rect(
+            radius,
+            radius,
+            color,
+            null,
+            null,
+            -(radius + radius / 10),
+            -(radius / 2)
+          );
 
-          // reset the radius, other non-radii drawing operations have overwritten it //
-          ship.radius = radius + 3;
-          ship.color = color;
+        // continue to draw on the ship Shape to create our design //
+        draw.circle(radius + 3, color, null, null, null, null, ship);
+        draw.circle(radius, "#CCC", null, null, null, null, ship);
+        draw.polyStar(radius, 3, 0, 0, color, null, null, null, null, ship);
+        draw.circle(radius - 15, "#CCC", null, null, -5, null, ship);
 
-          // rasterize the vector graphic, basically creating a bitmap //
-          ship.snapToPixel = true;
-          ship.cache(-radius - 10, -radius - 10, radius * 2 + 15, radius * 2 + 15);
+        // reset the radius, other non-radii drawing operations have overwritten it //
+        ship.radius = radius + 3;
+        ship.color = color;
 
-          // Merge the ship with your game libs makeBody()
-          Object.assign(ship, phyz.makeBody('ship'));
+        // rasterize the vector graphic, basically creating a bitmap //
+        ship.snapToPixel = true;
+        ship.cache(
+          -radius - 10,
+          -radius - 10,
+          radius * 2 + 15,
+          radius * 2 + 15
+        );
 
-          // give the ship a default propulsion //
-          ship.propulsion = 0;
+        // Merge the ship with your game libs makeBody()
+        Object.assign(ship, phyz.makeBody("ship"));
 
-          // set a random rotation value //
-          ship.rotation = numz.randomIntBetween(0, 359);
+        // give the ship a default propulsion //
+        ship.propulsion = 0;
 
-          // set the update behavior for the ship //
-          ship.update = updateShip;
+        // set a random rotation value //
+        ship.rotation = numz.randomIntBetween(0, 359);
 
-          /*
-           * Returns the global position of where
-           * we want the exhaust to show up. This 
-           * global point will be passed to the 
-           * partical manager, who'll create and 
-           * render the ship's exhaust.
-           */
-          ship.getExhaustPoint = getExhaustPoint;
+        // set the update behavior for the ship //
+        ship.update = updateShip;
 
-          /*
-           * Returns the global position from where
-           * we want the projectile to launch. This 
-           * global point will be passed to the 
-           * projectile manager, who'll create and 
-           * render the ship's projectile.
-           */
-          ship.getProjectilePoint = getProjectilePoint;
-          
-          ship.explosion = fx
-            .makeEmitter(5, 8, null, new Proton.Velocity(new Proton.Span(4, 2), new Proton.Span(0, 360), 'polar'), [new Proton.RandomDrift(5, 0, .35)]);
+        /*
+         * Returns the global position of where
+         * we want the exhaust to show up. This
+         * global point will be passed to the
+         * partical manager, who'll create and
+         * render the ship's exhaust.
+         */
+        ship.getExhaustPoint = getExhaustPoint;
 
-          // randomized position within canvas //
-          ship.x = numz.randomIntBetween(0, canvas.width);
-          ship.y = numz.randomIntBetween(0, canvas.height);
+        /*
+         * Returns the global position from where
+         * we want the projectile to launch. This
+         * global point will be passed to the
+         * projectile manager, who'll create and
+         * render the ship's projectile.
+         */
+        ship.getProjectilePoint = getProjectilePoint;
 
-          return ship;
-        },
-        makeOrb() {
-          const orb = draw.randomCircleInArea(canvas, false, true, '#999', 2);
-          // console.log(`rad: ${orb.radius}`);
-          // console.log(`den: ${orb.radius / 20 * 0.5}`);
-          Object.assign(orb, phyz.makeBody('orb', { 
-            density: orb.radius / 20 * 0.5,
+        ship.explosion = fx.makeEmitter(
+          5,
+          8,
+          null,
+          new Proton.Velocity(
+            new Proton.Span(4, 2),
+            new Proton.Span(0, 360),
+            "polar"
+          ),
+          [new Proton.RandomDrift(5, 0, 0.35)]
+        );
+
+        // randomized position within canvas //
+        ship.x = numz.randomIntBetween(0, canvas.width);
+        ship.y = numz.randomIntBetween(0, canvas.height);
+
+        return ship;
+      },
+      // make new function to design the power up
+      makePowerUp() {
+        // Create a simple circular power-up (use draw.circle to avoid unsupported APIs)
+        const radius = 12;
+        const color = "#ff0000ff"; // gold
+        const stroke = "#09ff00ff";
+        const powerup = draw.circle(radius, color, stroke, 2);
+        // makeBody will attach physics properties; ensure a radius exists for circular bodies
+        Object.assign(
+          powerup,
+          phyz.makeBody("powerup", {
+            density: 0.5,
+            volatility: 0.001,
+            integrity: 1,
+          })
+        );
+        // give it motion and an update method so the space manager handles it
+        phyz.addRandomVelocity(powerup, canvas);
+        powerup.update = updateOrb;
+        // Randomize position within canvas
+        powerup.x = numz.randomIntBetween(0, canvas.width);
+        powerup.y = numz.randomIntBetween(0, canvas.height);
+        powerup.type = "powerup";
+        return powerup;
+      },
+      makeOrb() {
+        const orb = draw.randomCircleInArea(canvas, false, true, "#999", 2);
+        // console.log(`rad: ${orb.radius}`);
+        // console.log(`den: ${orb.radius / 20 * 0.5}`);
+        Object.assign(
+          orb,
+          phyz.makeBody("orb", {
+            density: (orb.radius / 20) * 0.5,
             volatility: orb.radius * 0.0001,
-          }));
-          phyz.addRandomVelocity(orb, canvas);
-          orb.update = updateOrb;
-          
-          // TODO: why is caching killing the cross on the orb?
-          // rasterize the vector graphic, basically creating a bitmap //
-          // orb.snapToPixel = true;
-          // const rad = orb.radius + 2;
-          // orb.cache(-rad, -rad, rad * 2, rad * 2);
-          
-          return orb;
-        },
-        centerOnStage,
-      };
-    });
-}(window, window.opspark, window._));
+          })
+        );
+        phyz.addRandomVelocity(orb, canvas);
+        orb.update = updateOrb;
+
+        // TODO: why is caching killing the cross on the orb?
+        // rasterize the vector graphic, basically creating a bitmap //
+        // orb.snapToPixel = true;
+        // const rad = orb.radius + 2;
+        // orb.cache(-rad, -rad, rad * 2, rad * 2);
+
+        return orb;
+      },
+      centerOnStage,
+    };
+  });
+})(window, window.opspark, window._);
