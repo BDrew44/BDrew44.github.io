@@ -1,0 +1,28 @@
+{
+  "name": "second-slice-of-pi",
+  "version": "1.0.0",
+  "description": "IoT project with middleware for data format conversion",
+  "main": "wot-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node wot-server.js"
+  },
+  "dependencies": {
+    "onoff": "^6.0.3",
+    "node-dht-sensor": "^0.4.3",
+    "express": "^4.17.3",
+    "cors": "^2.8.5",
+    "epoll": "^4.0.1",
+    "body-parser": "^1.20.0",
+    "xmlhttprequest": "^1.8.0",
+    "node-json2html": "^2.2.2"
+  },
+  "keywords": [
+    "iot",
+    "raspberry-pi",
+    "middleware",
+    "converter"
+  ],
+  "author": "",
+  "license": "ISC"
+}
