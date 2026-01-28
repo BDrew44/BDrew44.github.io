@@ -1,0 +1,33 @@
+// function that takes a function as an arguement
+// function that returns a function
+
+ function sayHello() {
+    console.log("Hello World!");
+}
+
+
+("button").on("click", sayHello);
+
+
+SERVER.listen('LA', 70117, function (req, res) {
+    if (req.sender ==="HACKER")
+});
+
+
+var nums = [9, 3.14, Math.PI, 105, 67, -1, 0, ];
+
+nums.push(42);
+
+function pickBiggerNum(a, b) {
+    if a - b
+}
+
+var sorted = nums.sort(pickBiggerNum);
+
+console.log({sorted});
+
+var smallNums = nums.filter(function(num) {
+    return num < 5;) {
+});
+
+console.log({smallNums});
