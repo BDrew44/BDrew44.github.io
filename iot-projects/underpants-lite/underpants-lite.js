@@ -78,6 +78,16 @@ _.first = function (arr, num) {
   if (!Array.isArray(arr)) {
     return [];
   }
+  if (typeof num !== "number") {
+    return arr[0];
+  }
+  if (num < 0) {
+    return [];
+  }
+  if (num > arr.length) {
+    return arr;
+  }
+  return arr.slice(0, num);
 };
 /** _.last
  * Arguments:
@@ -96,7 +106,21 @@ _.first = function (arr, num) {
  *   _.last(["a", "b", "c"], 1) -> "c"
  *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
  */
-
+_.last = function (arr, num) {
+  if (!Array.isArray(arr)) {
+    return [];
+  }
+  if (typeof num !== "number") {
+    return arr[arr.length - 1];
+  }
+  if (num < 0) {
+    return [];
+  }
+  if (num > arr.length) {
+    return arr;
+  }
+  return arr.slice(-num);
+};
 /** _.indexOf
  * Arguments:
  *   1) An array
@@ -112,6 +136,14 @@ _.first = function (arr, num) {
  *   _.indexOf(["a","b","c"], "c") -> 2
  *   _.indexOf(["a","b","c"], "d") -> -1
  */
+_.indexOf = function (arr, val) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === val) {
+      return i;
+    }
+  }
+  return -1;
+};
 
 /** _.contains
  * Arguments:
@@ -127,7 +159,14 @@ _.first = function (arr, num) {
  *   _.contains([1,"two", 3.14], "two") -> true
  *   _.contains([1,"two", 3.14], "three") -> false
  */
-
+_.contains = function (arr, val) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === val) {
+      return true;
+    }
+  }
+  return false;
+};
 /** _.each
  * Arguments:
  *   1) A collection
@@ -143,7 +182,19 @@ _.first = function (arr, num) {
  *   _.each(["a","b","c"], function(e,i,a){ console.log(e); });
  *      -> should log "a" "b" "c" to the console
  */
-
+_.each = function (coll, func) {
+  if (Array.isArray(coll) === true) {
+    for (let i = 0; i < coll.length; i++) {
+      // i --> 0, 1, 2, 3, 4
+      // coll[i] --> whatever the first value in the array is, then the second, etc.
+      func(coll[i], i, coll);
+    }
+  } else {
+    for (const key in coll) {
+      func(coll[key], key, coll);
+    }
+  }
+};
 /** _.filter
  * Arguments:
  *   1) An array
