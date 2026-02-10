@@ -212,6 +212,16 @@ _.each = function (coll, func) {
  *   use _.each in your implementation
  */
 
+_.filter = function (arr, func) {
+  const result = [];
+  _.each(arr, function (element, index, array) {
+    if (func(element, index, array)) {
+      result.push(element);
+    }
+  });
+  return result;
+};
+
 /** _.map
  * Arguments:
  *   1) A collection
@@ -229,6 +239,14 @@ _.each = function (coll, func) {
  *   _.map([1,2,3,4], function(e){ return e * 2; }) -> [2,4,6,8]
  */
 
+_.map = function (coll, func) {
+  const result = [];
+  _.each(coll, function (element, index, collection) {
+    result.push(func(element, index, collection));
+  });
+  return result;
+};
+
 /** _.reject
  * Arguments:
  *   1) An array
@@ -245,24 +263,42 @@ _.each = function (coll, func) {
  *   _.reject([1,2,3,4,5], function(e){ return e%2 === 0}; ) -> [1,3,5]
  */
 
+_.reject = function (arr, func) {
+  return _.filter(arr, function (element, index, array) {
+    return !func(element, index, array);
+  });
+};
+
 /** _.partition
-* Arguments:
-*   1) An array
-*   2) A function
-* Objectives:
-*   1) Call <function> for each element in <array> passing it the arguments:
-*       element, key, <array>
-*   2) Return an array that is made up of 2 sub arrays:
-*       0) An array that contains all the values for which <function> returned something truthy
-*       1) An array that contains all the values for which <function> returned something falsy
-* Edge Cases:
-*   1) This is going to return an array of arrays.
-* Examples:
-*   _.partition([1,2,3,4,5], function(element,index,arr){
-*     return element % 2 === 0;
-*   }); -> [[2,4],[1,3,5]]
-}
-*/
+ * Arguments:
+ *   1) An array
+ *   2) A function
+ * Objectives:
+ *   1) Call <function> for each element in <array> passing it the arguments:
+ *       element, key, <array>
+ *   2) Return an array that is made up of 2 sub arrays:
+ *       0) An array that contains all the values for which <function> returned something truthy
+ *       1) An array that contains all the values for which <function> returned something falsy
+ * Edge Cases:
+ *   1) This is going to return an array of arrays.
+ * Examples:
+ *   _.partition([1,2,3,4,5], function(element,index,arr){
+ *     return element % 2 === 0;
+ *   }); -> [[2,4],[1,3,5]]
+ */
+
+_.partition = function (arr, func) {
+  const truthy = [];
+  const falsy = [];
+  _.each(arr, function (element, index, array) {
+    if (func(element, index, array)) {
+      truthy.push(element);
+    } else {
+      falsy.push(element);
+    }
+  });
+  return [truthy, falsy];
+};
 
 /** _.every
  * Arguments:
@@ -286,6 +322,20 @@ _.each = function (coll, func) {
  *   _.every([1,2,3], function(e){ return e % 2 === 0}; ) -> false
  */
 
+_.every = function (coll, func) {
+  let result = true;
+  _.each(coll, function (element, index, collection) {
+    if (func === undefined) {
+      if (!element) {
+        result = false;
+      }
+    } else if (!func(element, index, collection)) {
+      result = false;
+    }
+  });
+  return result;
+};
+
 /** _.some
  * Arguments:
  *   1) A collection
@@ -308,6 +358,20 @@ _.each = function (coll, func) {
  *   _.some([1,2,3], function(e){ return e % 2 === 0}; ) -> true
  */
 
+_.some = function (coll, func) {
+  let result = false;
+  _.each(coll, function (element, index, collection) {
+    if (func === undefined) {
+      if (element) {
+        result = true;
+      }
+    } else if (func(element, index, collection)) {
+      result = true;
+    }
+  });
+  return result;
+};
+
 /** _.pluck
  * Arguments:
  *   1) An array of objects
@@ -318,6 +382,12 @@ _.each = function (coll, func) {
  * Examples:
  *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
  */
+
+_.pluck = function (arr, prop) {
+  return _.map(arr, function (element) {
+    return element[prop];
+  });
+};
 
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////
