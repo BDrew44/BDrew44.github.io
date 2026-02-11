@@ -1,22 +1,24 @@
 // fetchServer.js file
-const fetch = require("node-fetch");
+var args = process.argv.slice(2);
 
 const http = require("http");
 
 const port = 3000; // Port to listen on
 
-http.createServer(requestListenerFunction).listen(port);
-
 http
   .createServer(async function (req, res) {
-    const response = await fetch("http://Bdrew44.github.io");
+    const response = await fetch(url);
+
+    var url = args[0] ? args[0] : "https://Bdrew44.github.io";
 
     console.log(response);
 
     if (response.ok) {
-      console.log("response recieved");
-      console.log(response.status);
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.write("response received");
+    } else {
+      res.write(fetchResponse.statusText);
     }
-    res.writeHead(200, { "Content-Type": "text/html" });
+    res.end();
   })
   .listen(port);
