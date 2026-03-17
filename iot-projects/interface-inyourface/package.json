@@ -1,0 +1,12 @@
+{
+  "name": "interface-inyourface",
+  "version": "1.0.0",
+  "description": "### Design a web interface that can display data from a temperature sensor in real-time.",
+  "main": "polling-temp-charts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

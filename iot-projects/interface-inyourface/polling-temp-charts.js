@@ -12,19 +12,30 @@ $(document).ready(function () {
     /////////////////////////////////////////////////
     // CHART PREP SECTION: DO NOT TOUCH /////////////
     /////////////////////////////////////////////////
-    var jsonChart = new google.visualization.LineChart($("#json-chart")[0]);
-    var ajaxChart = new google.visualization.LineChart($("#ajax-chart")[0]);
-    var wsChart = new google.visualization.LineChart($("#ws-chart")[0]);
-    var jsonData = google.visualization.arrayToDataTable([
-      ["Time", "JSON Polling Temperature"],
+    var jsonSimChart = new google.visualization.LineChart(
+      $("#json-sim-chart")[0],
+    );
+    var ajaxTempChart = new google.visualization.LineChart(
+      $("#ajax-temp-chart")[0],
+    );
+    var ajaxAirChart = new google.visualization.LineChart(
+      $("#ajax-air-chart")[0],
+    );
+    var wsSimChart = new google.visualization.LineChart($("#ws-sim-chart")[0]);
+    var jsonSimData = google.visualization.arrayToDataTable([
+      ["Time", "JSON Simulation Polling Temperature"],
       [getTime(), 0],
     ]);
-    var ajaxData = google.visualization.arrayToDataTable([
-      ["Time", "AJAX Polling Temperature"],
+    var ajaxTempData = google.visualization.arrayToDataTable([
+      ["Time", "AJAX Temperature Polling Temperature"],
       [getTime(), 0],
     ]);
-    var wsData = google.visualization.arrayToDataTable([
-      ["Time", "WebSocket Polling Temperature"],
+    var ajaxAirData = google.visualization.arrayToDataTable([
+      ["Time", "AJAX Air Polling Temperature"],
+      [getTime(), 0],
+    ]);
+    var wsSimData = google.visualization.arrayToDataTable([
+      ["Time", "WebSocket Simulation Polling Temperature"],
       [getTime(), 0],
     ]);
 
@@ -51,46 +62,60 @@ $(document).ready(function () {
     }
 
     // TODO 3: Initialize high and low records
-    const json = {
+    const jsonSim = {
       highest: 0,
       lowest: 100,
-      highID: "#json-highest",
-      lowID: "#json-lowest",
+      highID: "json-sim-highest",
+      lowID: "json-sim-lowest",
     };
 
-    const ajax = {
+    const ajaxTemp = {
       highest: 0,
       lowest: 100,
-      highID: "#ajax-highest",
-      lowID: "#ajax-lowest",
+      highID: "ajax-temp-highest",
+      lowID: "ajax-temp-lowest",
     };
 
-    const ws = {
+    const ajaxAir = {
       highest: 0,
       lowest: 100,
-      highID: "#ws-highest",
-      lowID: "#ws-lowest",
+      highID: "ajax-air-highest",
+      lowID: "ajax-air-lowest",
     };
 
-    $("#json-chart-container").append(
-      `<p id=${json.highID.slice(1)}>Highest recorded JSON value is ${json.highest}</p>`,
+    const wsSim = {
+      highest: 0,
+      lowest: 100,
+      highID: "ws-sim-highest",
+      lowID: "ws-sim-lowest",
+    };
+
+    $("#json-sim-chart-container").append(
+      `<p id=${jsonSim.highID}>Highest recorded JSON Simulation value is ${jsonSim.highest}</p>`,
     );
-    $("#json-chart-container").append(
-      `<p id=${json.lowID.slice(1)}>Lowest recorded JSON value is ${json.lowest}</p>`,
+    $("#json-sim-chart-container").append(
+      `<p id=${jsonSim.lowID}>Lowest recorded JSON Simulation value is ${jsonSim.lowest}</p>`,
     );
 
-    $("#ajax-chart-container").append(
-      `<p id=${ajax.highID.slice(1)}>Highest recorded AJAX value is ${ajax.highest}</p>`,
+    $("#ajax-temp-chart-container").append(
+      `<p id=${ajaxTemp.highID}>Highest recorded AJAX Temperature value is ${ajaxTemp.highest}</p>`,
     );
-    $("#ajax-chart-container").append(
-      `<p id=${ajax.lowID.slice(1)}>Lowest recorded AJAX value is ${ajax.lowest}</p>`,
+    $("#ajax-temp-chart-container").append(
+      `<p id=${ajaxTemp.lowID}>Lowest recorded AJAX Temperature value is ${ajaxTemp.lowest}</p>`,
     );
 
-    $("#ws-chart-container").append(
-      `<p id=${ws.highID.slice(1)}>Highest recorded WebSocket value is ${ws.highest}</p>`,
+    $("#ajax-air-chart-container").append(
+      `<p id=${ajaxAir.highID}>Highest recorded AJAX Air value is ${ajaxAir.highest}</p>`,
     );
-    $("#ws-chart-container").append(
-      `<p id=${ws.lowID.slice(1)}>Lowest recorded WebSocket value is ${ws.lowest}</p>`,
+    $("#ajax-air-chart-container").append(
+      `<p id=${ajaxAir.lowID}>Lowest recorded AJAX Air value is ${ajaxAir.lowest}</p>`,
+    );
+
+    $("#ws-sim-chart-container").append(
+      `<p id=${wsSim.highID}>Highest recorded WebSocket Simulation value is ${wsSim.highest}</p>`,
+    );
+    $("#ws-sim-chart-container").append(
+      `<p id=${wsSim.lowID}>Lowest recorded WebSocket Simulation value is ${wsSim.lowest}</p>`,
     );
 
     // TODO 4: Update high and low records
@@ -108,8 +133,8 @@ $(document).ready(function () {
     // TODO 5: Regular JSON Polling
     function doJSONPoll() {
       $.getJSON("http://localhost:8080/", function (result) {
-        addDataPoint(result, jsonData, jsonChart);
-        updateRecords(json, result.value);
+        addDataPoint(result, jsonSimData, jsonSimChart);
+        updateRecords(jsonSim, result.value);
       });
     }
 
@@ -122,21 +147,36 @@ $(document).ready(function () {
         method: "GET",
         dataType: "json",
         success: function (result) {
-          addDataPoint(result, ajaxData, ajaxChart);
-          updateRecords(ajax, result.value);
+          addDataPoint(result, ajaxTempData, ajaxTempChart);
+          updateRecords(ajaxTemp, result.value);
         },
       });
     }
 
     setInterval(doAJAXPoll, 10000);
 
+    // Polling for AJAX Air
+    function doAJAXAirPoll() {
+      $.ajax({
+        url: "http://localhost:8080/",
+        method: "GET",
+        dataType: "json",
+        success: function (result) {
+          addDataPoint(result, ajaxAirData, ajaxAirChart);
+          updateRecords(ajaxAir, result.value);
+        },
+      });
+    }
+
+    setInterval(doAJAXAirPoll, 7000);
+
     // TODO 7: WebSocket Polling
     var socket = new WebSocket("ws://localhost:8080");
 
     socket.onmessage = function (event) {
       var result = JSON.parse(event.data);
-      addDataPoint(result, wsData, wsChart);
-      updateRecords(ws, result.value);
+      addDataPoint(result, wsSimData, wsSimChart);
+      updateRecords(wsSim, result.value);
     };
 
     socket.onerror = function (error) {
