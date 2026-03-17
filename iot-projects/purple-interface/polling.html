@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Polling Temperature Charts</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script src="polling.js"></script>
+    <link rel="stylesheet" href="polling.css" />
+  </head>
+
+  <!-- This is the page HTML. You should not edit any of this. Scroll down to find the JavaScript section. -->
+  <body>
+    <div>
+      <nav>
+        <header>Polling Temperature Charts</header>
+      </nav>
+    </div>
+
+    <main>
+      <div id="sim-chart-container">
+        <div id="json-sim-chart-container">
+          <h2>JSON Simulated Polling</h2>
+          <div id="json-sim-chart"></div>
+        </div>
+        <div id="ws-sim-chart-container">
+          <h2>WebSocket Simulated Polling</h2>
+          <div id="ws-sim-chart"></div>
+        </div>
+      </div>
+      <div id="air-chart-container">
+        <div id="ajax-temp-chart-container">
+          <h2>AJAX Polling for Purple Air Temperature</h2>
+          <div id="ajax-temp-chart"></div>
+        </div>
+        <div id="ajax-air-chart-container">
+          <h2>AJAX Polling For Purple Air Quality</h2>
+          <div id="ajax-air-chart"></div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
