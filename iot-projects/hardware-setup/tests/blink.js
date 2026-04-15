@@ -1,8 +1,12 @@
 const onoff = require("onoff");
 
 const g = onoff.Gpio;
-const l1 = new g(518, "out");
-const l2 = new g(533, "out");
+//15e 17e
+//  Gpio 22 3.3V
+//23e 24e
+// gpio 11 gpio 11
+const l1 = new g(587, "out");
+const l2 = new g(592, "out");
 let i;
 
 i = setInterval(function () {
