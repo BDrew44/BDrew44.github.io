@@ -13,27 +13,20 @@ i = setInterval(function () {
   const value = (l1.readSync() + 1) % 2;
   l1.write(value, function () {
     console.log(`Changed LED 1 state to: ${value}`);
-    l2.write((value + 1) % 2, function () {
-      console.log(`Changed LED 2 state to: ${(value + 1) % 2}`);
-    });
+  });
+  l2.write((value + 1) % 2, function () {
+    console.log(`Changed LED 2 state to: ${(value + 1) % 2}`);
   });
 }, 1000);
 
 process.on("SIGINT", function () {
   clearInterval(i);
-  off(l1);
-  off(l2);
+  l1.writeSync(0);
+  l1.unexport()
+  l2.writeSync(0);
+  l2.unexport()
 
-  function wrap() {
-    return function () {
-      console.log("Bye, bye!");
-      process.exit();
-    };
-  }
-  wrap()();
+  console.log('adios')
 
-  function off(l) {
-    l.writeSync(0);
-    return l.unexport();
-  }
+  process.exit();
 });
