@@ -3,22 +3,27 @@ const express = require('express'),
 	resources = require('../resources/model');
 
 router.route("/").get(function (req, res, next){
-	res.send (resources.pi.sensors);
+	req.result = resources.pi.sensors;
+	next()
 });
 
 router.route("/dht").get(function (req, res, next){
-	res.send (resources.pi.sensors.dht);
+	req.result = resources.pi.sensors.dht;
+	next()
 });
 router.route("/dht/temperature").get(function (req, res, next){
-	res.send (resources.pi.sensors.dht.temperature);
+	req.result = resources.pi.sensors.dht.temperature;
+	next()
 });
 
 router.route("/dht/humidity").get(function (req, res, next){
-	res.send (resources.pi.sensors.dht.humidity);
+	req.result = resources.pi.sensors.dht.humidity;
+	next()
 });
 
 router.route("/mq").get(function (req, res, next){
-	res.send (resources.pi.sensors.mq);
+	req.result = resources.pi.sensors.mq;
+next()
 });
 // TODO: add routes to expose the sensors on the Pi (MQ / DHT etc.)
 
