@@ -10,7 +10,7 @@ let localParams = {'frequency': 2000};
 function connectHardware(){
     sensor = {
         initialize:function(){
-            sensorDriver.initialize(device.model, device.gpio)
+            sensorDriver.initialize(device.model, device.gpio);
         },
         
         read:function(){

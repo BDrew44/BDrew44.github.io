@@ -10,28 +10,39 @@ module.exports = function() {
 						{
 							"<>": "p",
 							html: [
-								{"<>": "b", html: "name1:"},
-								{ "<>" : "p", html: "${name1}"},
+								{"<>": "b", html: "name:"},
+								{ "<>" : "p", html: "${name}"},
 									
 							],
 						},
 						{
 							"<>": "p",
 							html: [
-								{"<>": "b", html: "name1:"},
-								{"<>": "p", html: "{$name1}"},
+								{"<>": "b", html: "description:"},
+								{"<>": "p", html: "${description}"},
+							],
+						},
+
+						{
+							"<>": "p",
+							html: [
+								{"<>": "b", html: "value:"},
+								{"<>": "p", html: "${value}"},
 							],
 						},
 					],
 				};
-				json2html.render(result, render)
-					res.send()
+				const result = json2html.render(req.result, render);
+				console.log("sleep");
+				res.send(result);
+				//next();
 				
 			
 			}
 
 		} else{
-			res.send(req)
+			console.log(req.result);
+			res.send(req.result);
 			next();
 		}
 		// TODO 2: Create the converter function

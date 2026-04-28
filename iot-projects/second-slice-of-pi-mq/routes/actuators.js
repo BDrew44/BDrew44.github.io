@@ -3,15 +3,18 @@ const express = require('express'),
 	resources = require('./../resources/model');
 
 router.route("/").get(function (req, res, next){
-	res.send(resources.pi.actuators);
+	res.result = resources.pi.actuators;
+	next();
 });
 
 router.route("/leds").get(function (req, res, next){
-	res.send(resources.pi.actuators.leds);
+	res.result = resources.pi.actuators.leds;
+		next();
 });
 
 router.route("/leds/:id").get(function (req, res, next){
-	res.send(resources.pi.actuators.leds[req.params.id]);
+	res.result = resources.pi.actuators.leds[req.params.id];
+	next();
 });
 
 // TODO: add routes to expose the actuators on the Pi (LEDs / relays etc.)

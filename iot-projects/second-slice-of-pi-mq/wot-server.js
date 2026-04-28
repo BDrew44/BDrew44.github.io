@@ -5,7 +5,7 @@ var dhtPlugin = require("./plugins/internal/dhtPlugin");
 const httpServer = require('./servers/http'),
 	resources = require('./resources/model');
 	mqPlugin.start();
-	dhtPlugin.start({'frequency': 2000});
+	//dhtPlugin.start({'frequency': 2000});
 	
 
 const server = httpServer.listen(resources.pi.port, function () {
