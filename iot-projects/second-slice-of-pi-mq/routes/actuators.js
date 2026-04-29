@@ -1,19 +1,21 @@
-const express = require('express'),
-	router = express.Router(),
-	resources = require('./../resources/model');
+const express = require('express');
+
+const resources = require('./../resources/model');
+
+const router = express.Router();
 
 router.route("/").get(function (req, res, next){
-	res.result = resources.pi.actuators;
+	req.result = resources.pi.actuators;
 	next();
 });
 
 router.route("/leds").get(function (req, res, next){
-	res.result = resources.pi.actuators.leds;
-		next();
+	req.result = resources.pi.actuators.leds;
+	next();
 });
 
 router.route("/leds/:id").get(function (req, res, next){
-	res.result = resources.pi.actuators.leds[req.params.id];
+	req.result = resources.pi.actuators.leds[req.params.id];
 	next();
 });
 

@@ -1,6 +1,6 @@
 // In this file, you will work on TODOs 5d and 6d
 var mqPlugin = require("./plugins/internal/mqPlugin");
-var dhtPlugin = require("./plugins/internal/dhtPlugin");
+//var dhtPlugin = require("./plugins/internal/dhtPlugin");
 
 const httpServer = require('./servers/http'),
 	resources = require('./resources/model');
@@ -14,6 +14,6 @@ const server = httpServer.listen(resources.pi.port, function () {
 
 process.on('SIGINT', function() {
 	mqPlugin.stop();
-	dhtPlugin.stop();
+	//dhtPlugin.stop();
 	process.exit();
 });
